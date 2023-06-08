@@ -25,6 +25,8 @@ export const fetchProductsAsync = createAsyncThunk(
   'shopMain/fetchProducts',
   async () => {
     const response = await fetchProducts();
+    console.log(response.data);
+    
     return response.data;
   }
 );
@@ -46,6 +48,7 @@ export const shopMainSlice = createSlice({
     .addCase(fetchProductsAsync.fulfilled, (state, action) => {
       state.status = 'idle';
       state.products = action.payload;
+      console.log('Fetched products:', state.products);
     })
     .addCase(fetchProductsAsync.rejected, (state) => {
       state.status = 'failed';

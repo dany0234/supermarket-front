@@ -12,8 +12,15 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState } from 'react';
+import { registerAsync } from './signupSlicer';
+import { AsyncThunkAction } from '@reduxjs/toolkit';
+// import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../app/hooks';
+
 
 function Copyright(props: any) {
+
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -30,15 +37,44 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const dispatch = useAppDispatch();
+
+  const [firstname, setFirstname] = useState("")
+  const handleFirstnameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFirstname(event.target.value); //this is the currect way to target events with mui 
+  };
+  const [lastname, setLastname] = useState("")
+  const handleLastnameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLastname(event.target.value);};
+  const [password, setPassword] = useState("")
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(event.target.value);};
+  const [email, setEmail] = useState("")
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);};
+   const [city, setCity] = useState("")
+  const handleCityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCity(event.target.value);};
+  const [address, setAddress] = useState("")
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAddress(event.target.value);};
+  
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get('email'),
       password: data.get('password'),
+      firstname: data.get('firstname'),
+      lastname: data.get('lastname'),
+      city: data.get('city'),
+      address: data.get('address'),
     });
-  };
+    await dispatch(registerAsync({firstname,lastname,password,email,city,address }));
+    window.location.href = '/login';
 
+  };
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -59,14 +95,15 @@ export default function SignUp() {
           </Typography>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
+              <Grid  item xs={12} sm={6}> 
+                <TextField 
                   autoComplete="given-name"
                   name="firstName"
                   required
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  onChange={handleFirstnameChange} //this is the currect way to target events with mui !
                   autoFocus
                 />
               </Grid>
@@ -78,6 +115,7 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  onChange={handleLastnameChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -88,6 +126,7 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  onChange={handleEmailChange}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -99,6 +138,7 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  onChange={handlePasswordChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -110,6 +150,7 @@ export default function SignUp() {
                   type="address"
                   id="address"
                   autoComplete="new-address"
+                  onChange={handleAddressChange}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -121,10 +162,9 @@ export default function SignUp() {
                   type="city"
                   id="city"
                   autoComplete="new-city"
+                  onChange={handleCityChange}
                 />
               </Grid>
-
-
               </Grid>
             
             <Button
@@ -132,6 +172,7 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={() => dispatch(registerAsync({firstname,lastname,password,email,city,address }))}
             >
               Sign Up
             </Button>

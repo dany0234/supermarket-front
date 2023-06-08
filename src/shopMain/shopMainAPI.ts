@@ -1,12 +1,10 @@
 import axios from 'axios';
+import {Product} from './shopMainSlicer'
 
 let MY_SERVER = "http://127.0.0.1:8000/products"
 
-export const fetchProducts = async () => {
-  try {
-    const response = await axios.get(MY_SERVER);
-    return response.data;
-  } catch (error) {
-    throw Error('Failed to fetch product');
-  }
-};
+export function fetchProducts() {
+    return new Promise<{data:any}>((resolve) =>
+     axios.get(MY_SERVER).then(res => resolve({data: res.data}))
+    )
+}
