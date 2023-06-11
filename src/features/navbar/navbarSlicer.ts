@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
-import { fetchCount } from './navbarAPI';
+import { fetchProducts } from './navbarAPI';
 
 export interface CounterState {
   value: number;
@@ -18,9 +18,9 @@ const initialState: CounterState = {
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
 export const incrementAsync = createAsyncThunk(
-  'navbar/fetchCount',
+  'navbar/fetchProducts',
   async (amount: number) => {
-    const response = await fetchCount(amount);
+    const response = await fetchProducts(amount);
     // The value we return becomes the `fulfilled` action payload
     return response.data;
   }
