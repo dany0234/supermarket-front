@@ -5,6 +5,7 @@ import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import { Link } from 'react-router-dom';
 import { selectCartItems } from './cartSlicer';
 import { Product } from '../shopMain/shopMainSlicer';
+import { CartItem } from './CartItem';
 
 interface CartProps {
   products: Product[];
@@ -20,7 +21,7 @@ export function Cart({ products, quantities }: CartProps) {
         width: '335px',
         backgroundColor: ' #227e47',
         position: 'fixed',
-        top: 0,
+        top: 90,
         bottom: 0,
         left: 0,
         maxWidth: '335px',
@@ -41,10 +42,7 @@ export function Cart({ products, quantities }: CartProps) {
           ) : (
             <ul className="cart-items">
               {cartItems.map((item) => (
-                <li key={item.product.id}>
-                  <span>{item.product.name}</span>
-                  <span>Quantity: {item.quantity}</span>
-                </li>
+                <CartItem key={item.product.id} item={item.product} quantity={item.quantity} />
               ))}
             </ul>
           )}
