@@ -12,31 +12,23 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AddressForm from './AddressFrom';
-import PaymentForm from './PaymentForm';
+import AddressForm, { AddressData } from './AddressFrom';
+import PaymentForm, { PaymentData } from './PaymentForm';
 import Review from './Review';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
+function hideCardNumber(cardNumber: string) {
+  const last4Digits = cardNumber.slice(-4);
+  return `**** **** **** ${last4Digits}`;
 }
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-function getStepContent(step: number) {
+function getStepContent(step: number, handleNext: () => void) {
   switch (step) {
     case 0:
-      return <AddressForm />;
+      return <AddressForm onAddressSubmit={handleNext} />;
     case 1:
-      return <PaymentForm />;
+      return <PaymentForm onPaymentSubmit={handleNext} />;
     case 2:
       return <Review />;
     default:
@@ -44,13 +36,20 @@ function getStepContent(step: number) {
   }
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
 export default function Checkout() {
   const [activeStep, setActiveStep] = React.useState(0);
+  const [address, setAddress] = React.useState<AddressData | null>(null);
+  const [payment, setPayment] = React.useState<PaymentData | null>(null);
 
-  const handleNext = () => {
+  const handleNext = (data: AddressData | PaymentData) => {
+    if (activeStep === 0) {
+      setAddress(data as AddressData);
+    } else if (activeStep === 1) {
+      setPayment(data as PaymentData);
+    }
+
     setActiveStep(activeStep + 1);
   };
 
@@ -94,14 +93,13 @@ export default function Checkout() {
                 Thank you for your order.
               </Typography>
               <Typography variant="subtitle1">
-                Your order number is #2001539. We have emailed your order
-                confirmation, and will send you an update when your order has
-                shipped.
+                Your order number is #2001539. We have emailed your order confirmation, and will
+                send you an update when your order has shipped.
               </Typography>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep)}
+              {getStepContent(activeStep, handleNext)}
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 {activeStep !== 0 && (
                   <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -110,7 +108,7 @@ export default function Checkout() {
                 )}
                 <Button
                   variant="contained"
-                  onClick={handleNext}
+                  onClick={() => handleNext(null)}
                   sx={{ mt: 3, ml: 1 }}
                 >
                   {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
@@ -119,7 +117,31 @@ export default function Checkout() {
             </React.Fragment>
           )}
         </Paper>
-        <Copyright />
+        <Typography variant="body2" color="text.secondary" align="center">
+          {' '}
+          {activeStep === 1 && payment ? (
+            <>
+              <strong>Payment Method:</strong> {hideCardNumber(payment.cardNumber)}
+            </>
+          ) : (
+            <Link color="inherit" href="#">
+              Edit
+            </Link>
+          )}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" align="center">
+          {' '}
+          {activeStep === 0 && address ? (
+            <>
+              <strong>Shipping Address:</strong> {address.address1}, {address.city},{' '}
+              {address.zip}, {address.country}
+            </>
+          ) : (
+            <Link color="inherit" href="#">
+              Edit
+            </Link>
+          )}
+        </Typography>
       </Container>
     </ThemeProvider>
   );

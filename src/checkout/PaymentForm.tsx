@@ -5,6 +5,15 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
+
+interface PaymentData {
+  cardName: string;
+  cardNumber: string;
+  expDate: string;
+  cvv: string;
+  saveCard: boolean;
+}
+
 export default function PaymentForm() {
   return (
     <React.Fragment>
@@ -63,3 +72,5 @@ export default function PaymentForm() {
     </React.Fragment>
   );
 }
+export type { PaymentData };
+
